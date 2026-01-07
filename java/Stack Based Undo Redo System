@@ -1,0 +1,105 @@
+import java.util.Scanner;
+
+public class Main {
+
+    static StringBuilder text = new StringBuilder();
+    static java.util.Stack<String> undoStack = new java.util.Stack<>();
+    static java.util.Stack<String> redoStack = new java.util.Stack<>();
+
+    static void addText(String str) {
+        undoStack.push(text.toString());
+        text.append(str);
+        redoStack.clear();
+        System.out.println("✔ Text added successfully.");
+    }
+
+    static void deleteText(int n) {
+        if (text.length() == 0) {
+            System.out.println("✖ No text to delete.");
+            return;
+        }
+
+        undoStack.push(text.toString());
+
+        if (n >= text.length())
+            text.setLength(0);
+        else
+            text.delete(text.length() - n, text.length());
+
+        redoStack.clear();
+        System.out.println("✔ Text deleted successfully.");
+    }
+
+    static void undo() {
+        if (!undoStack.isEmpty()) {
+            redoStack.push(text.toString());
+            text = new StringBuilder(undoStack.pop());
+            System.out.println("✔ Undo operation performed.");
+        } else {
+            System.out.println("✖ Nothing to undo.");
+        }
+    }
+
+    static void redo() {
+        if (!redoStack.isEmpty()) {
+            undoStack.push(text.toString());
+            text = new StringBuilder(redoStack.pop());
+            System.out.println("✔ Redo operation performed.");
+        } else {
+            System.out.println("✖ Nothing to redo.");
+        }
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\n--- Stack Based Undo-Redo System ---");
+            System.out.println("1. Add Text");
+            System.out.println("2. Delete Text");
+            System.out.println("3. Undo");
+            System.out.println("4. Redo");
+            System.out.println("5. Show Text");
+            System.out.println("6. Exit");
+            System.out.print("Enter choice: ");
+
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter text: ");
+                    addText(sc.nextLine());
+                    break;
+
+                case 2:
+                    System.out.print("Enter number of characters to delete: ");
+                    deleteText(sc.nextInt());
+                    break;
+
+                case 3:
+                    undo();
+                    break;
+
+                case 4:
+                    redo();
+                    break;
+
+                case 5:
+                    System.out.println("📄 Current Text: " + text);
+                    break;
+
+                case 6:
+                    System.out.println("👋 Program exited successfully.");
+                    break;
+
+                default:
+                    System.out.println("✖ Invalid choice. Try again.");
+            }
+        } while (choice != 6);
+
+        sc.close();
+    }
+}
